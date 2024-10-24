@@ -1,0 +1,106 @@
+.vl {
+    border-left: 1px solid rgb(160, 170, 180);
+    height: 50px;
+}
+
+
+.googleCalendar{
+  position: relative;
+  height: 0;
+  width: 50%;
+  padding-bottom: 40%;
+}
+
+.smgoogleCalendar iframe{
+    position: relative;
+  width: 100%;
+  padding-bottom: 40%;
+}
+
+.googleCalendar iframe{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dash{
+    border: 1.5px solid rgb(255, 255, 255);
+    width: 450px;
+    height: 1px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dash-sm{
+    border: 1.5px solid rgb(255, 255, 255);
+    width: 250px;
+    height: 1px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0,40px,0)
+    }
+
+    to {
+        transform: translate3d(0,0,0);
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes fadeInUp {
+    from {
+        transform: translate3d(0,40px,0)
+    }
+
+    to {
+        transform: translate3d(0,0,0);
+        opacity: 1
+    }
+}
+
+.animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-fill-mode: both
+}
+
+.animatedFadeInUp {
+    opacity: 0
+}
+
+.fadeInUp {
+    opacity: 0;
+    animation-name: fadeInUp;
+    -webkit-animation-name: fadeInUp;
+}
+
+.hover-underline-animation {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .hover-underline-animation:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #500000;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+  }
+  
+  .hover-underline-animation:hover:after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
