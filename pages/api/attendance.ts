@@ -47,7 +47,7 @@ interface UserRecord {
     name: string;
     [key: string]: string | number | null;
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
