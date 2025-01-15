@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from './prismaClient'; // Import the Prisma client
 import type { AttendanceHistory, AttendanceApiResponse } from "types/AttendanceTypes";
