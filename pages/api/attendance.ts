@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from './prismaClient'; // Import the Prisma client
-import type { AttendanceHistory, AttendanceApiResponse } from "~/types/AttendanceTypes";
+import type { AttendanceHistory, AttendanceApiResponse } from "types/AttendanceTypes";
 import { Users } from '@prisma/client';
 
 const EVENT_COLUMNS: string[] = [
