@@ -9,39 +9,39 @@ datasource db {
 }
 
 model Attendance {
-  id        Int      @id @default(autoincrement())
-  user      Users    @relation(fields: [userId], references: [id])
-  userId    Int
-  event     Event    @relation(fields: [eventId], references: [id])
-  eventId   Int
-  attended  Boolean  @default(false)
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  eventId  Int
+  attended Boolean @default(false)
+  user     Users   @relation(fields: [userId], references: [id])
+  event    Event   @relation(fields: [eventId], references: [id])
 }
 
 model Users {
-  id          Int    @id @default(autoincrement())
-  UIN         String @unique
-  name        String
-  SPRINGINFO  Int    @default(0)
-  BOBASOCIAL  Int    @default(0)
-  CHEVRONGBM  Int    @default(0)
-  COMSOC1     Int    @default(0)
-  COMSOC2     Int    @default(0)
-  COMSOC3     Int    @default(0)
-  COMSOC4     Int    @default(0)
-  COMSOC5     Int    @default(0)
-  DOWGBM      Int    @default(0)
-  ETAMGBM     Int    @default(0)
-  LAUNCHGBM   Int    @default(0)
-  LOCKHEEDGBM Int    @default(0)
-  SQUADMIXER  Int    @default(0)
-  WILLIAMSGBM Int    @default(0)
-  PEPSICOGBM  Int    @default(0)
-  GBM1        Int    @default(0)
-  attendances Attendance[]
+  id                  Int          @id @default(autoincrement())
+  UIN                 String       @unique
+  BOBASOCIAL          Int          @default(0)
+  LAUNCHGBM           Int          @default(0)
+  LOCKHEEDGBM         Int          @default(0)
+  SQUADMIXER          Int          @default(0)
+  WILLIAMSGBM         Int          @default(0)
+  PEPSICOGBM          Int          @default(0)
+  GBM1                Int          @default(0)
+  name                String
+  INFORMATIONAL       Int          @default(0)
+  CDMSMITH            Int          @default(0)
+  SQUADREVEALSOCIAL   Int          @default(0)
+  GEVERNOVA           Int          @default(0)
+  KDASOCIAL           Int          @default(0)
+  KIMCHISCAVENGERHUNT Int          @default(0)
+  RESUMEROAST         Int          @default(0)
+  SQUIDSQUADGAMES     Int          @default(0)
+  SWRIGBM             Int          @default(0)
+  attendances         Attendance[]
 }
 
 model Event {
-  id          Int       @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   date        DateTime
   attendances Attendance[]

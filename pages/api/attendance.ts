@@ -1,93 +1,89 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import prisma from './prismaClient'; // Import the singleton instance of PrismaClient
+import prisma from './prismaClient'; // Import the Prisma client
+import type { AttendanceHistory, AttendanceApiResponse } from "~/types/AttendanceTypes";
+import { Users } from '@prisma/client';
 
-interface User {
-  UIN: string;
-  [key: string]: any;
+const EVENT_COLUMNS: string[] = [
+    "INFORMATIONAL",
+    "WILLIAMSGBM",
+    "BOBASOCIAL",
+    "CDMSMITH",
+    "SQUADREVEALSOCIAL",
+    "RESUMEROAST",
+    "GEVERNOVA",
+    "KIMCHISCAVENGERHUNT",
+    "KDASOCIAL",
+    "SWRIGBM",
+    "SQUIDSQUADGAMES",
+];
+
+interface UserRecord {
+    UIN: string;
+    name: string;
+    [key: string]: string | number | null;
 }
 
-interface AttendanceRequestBody {
-  uin: string;
-  event: string;
-}
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
+    if (req.method === "GET") {
+        const { uin } = req.query;
 
-// API handler function to process the POST request
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Handling POST request to mark attendance
-  if (req.method === 'POST') {
-    try {
-      const { uin, event } = req.body as AttendanceRequestBody;
+        console.log("Received request with UIN:", uin);
 
-      // Validate input
-      if (!event || typeof event !== 'string' || !uin || typeof uin !== 'string') {
-        res.status(400).json({ message: "Invalid input: 'uin' and 'event' are required and must be strings." });
-        return;
-      }
+        if (!uin || typeof uin !== "string") {
+            console.log("Invalid UIN provided.");
+            return res
+                .status(400)
+                .json({ message: "'uin' is required and must be a string." });
+        }
 
-      const eventKey = event.toUpperCase();
+        try {
+            console.log("Fetching user from the database...");
+            // Fetching the user based on UIN
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            const user = (await prisma.users.findUnique({
+                where: { UIN: uin },
+            })) as Users | null;
 
-      const user = await prisma.users.findUnique({
-        where: { UIN: uin }
-      }) as User | null;  // Type assertion
+            console.log("User fetched:", user);
 
-      if (user && user[eventKey]) {
-        // User already marked for this event
-        res.status(200).json({ message: "Your attendance has already been marked!" });
-        return;
-      }
+            if (!user) {
+                console.log("User not found.");
+                return res.status(404).json({ message: "User not found" });
+            }
 
-      if (user) {
-        await prisma.users.update({
-          where: { UIN: uin },
-          data: { [eventKey]: 1 }
-        });
-      } else {
-        await prisma.users.create({
-          data: { UIN: uin, [eventKey]: 1 }
-        });
-      }
+            // Collecting attendance history
+            console.log("Collecting attendance history...");
+            const AHC: AttendanceHistory[] = EVENT_COLUMNS.map(
+                (event): AttendanceHistory => ({
+                    event_name: event,
+                    attended: !!user[event as keyof Users]
+                    //attended: !!user[event], // Safely checks for a truth value
+                    //timestamp: user[event] === 1 ? (user["Timestamp"] as string | null) : null,
+                })
+            );
 
-      res.status(200).json({ message: "Attendance marked!" });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error in POST /api/attendance:", error.message);
-        res.status(500).json({ message: "Error processing request", details: error.message });
-      } else {
-        console.error("Unknown error in POST /api/attendance");
-        res.status(500).json({ message: "Unknown error occurred", details: 'Unknown error' });
-      }
+            console.log("Attendance history collected:", AHC);
+
+            const response: AttendanceApiResponse = {
+                full_name: user.name,
+                AHC,
+            };
+
+            console.log("Responding with user data:", response);
+            res.status(200).json(response);
+        } catch (error) {
+            console.error("Error in GET /api/attendance:", error);
+            return res.status(500).json({
+                message: "Internal Server Error",
+                details: error instanceof Error ? error.message : "An unknown error occurred.",
+            });
+        }
+    } else {
+        console.log("Invalid method received:", req.method);
+        res.setHeader("Allow", ["GET"]);
+        res.status(405).json({ message: "Method Not Allowed" });
     }
-  } else if (req.method === 'GET') { // Handling GET request to fetch attendance
-    try {
-      const uin = req.query.uin as string;
-
-      if (!uin) {
-        res.status(400).json({ message: "Invalid input: 'uin' is required." });
-        return;
-      }
-
-      const user = await prisma.users.findUnique({
-        where: { UIN: uin }
-      }) as User | null;  // Type assertion
-
-      if (user) {
-        // Filter out the fields with attendance marked as 1
-        const attendedEvents = Object.keys(user).filter(key => user[key] === 1);
-        res.status(200).json({ attendedEvents });
-      } else {
-        res.status(404).json({ message: "User not found." });
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error in GET /api/attendance:", error.message);
-        res.status(500).json({ message: "Error processing request", details: error.message });
-      } else {
-        console.error("Unknown error in GET /api/attendance");
-        res.status(500).json({ message: "Unknown error occurred", details: 'Unknown error' });
-      }
-    }
-  } else {
-    res.setHeader('Allow', ['POST', 'GET']);
-    res.status(405).json({ message: 'Method Not Allowed' });
-  }
 }
