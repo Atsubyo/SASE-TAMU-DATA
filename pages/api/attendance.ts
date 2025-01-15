@@ -2,7 +2,25 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from './prismaClient'; // Import the Prisma client
 import type { AttendanceHistory, AttendanceApiResponse } from "types/AttendanceTypes";
 import { Users } from '@prisma/client';
+import Cors from 'cors';
 
+
+const cors = Cors({
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'OPTIONS'], // Allowed methods
+  });
+  
+  // Helper function to run middleware
+  function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
+    return new Promise((resolve, reject) => {
+      fn(req, res, (result: any) => {
+        if (result instanceof Error) {
+          return reject(result);
+        }
+        return resolve(result);
+      });
+    });
+  }
 const EVENT_COLUMNS: string[] = [
     "INFORMATIONAL",
     "WILLIAMSGBM",
@@ -27,6 +45,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    await runMiddleware(req, res, cors);
     if (req.method === "GET") {
         const { uin } = req.query;
 
