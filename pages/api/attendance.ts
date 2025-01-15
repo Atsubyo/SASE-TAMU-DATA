@@ -54,6 +54,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     await runMiddleware(req, res, cors);
     if (req.method === "GET") {
         const { uin } = req.query;
