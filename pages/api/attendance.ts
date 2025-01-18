@@ -13,7 +13,7 @@ import Cors from 'cors';
 
 
 const cors = Cors({
-    origin: "https://sasetamu.org", // Allow all origins
+    origin: 'https://sasetamu.org', // Allow all origins
     methods: ['GET', 'POST', 'OPTIONS'], // Allowed methods
   });
   
@@ -109,8 +109,16 @@ export default async function handler(
                 message: "Internal Server Error",
                 details: error instanceof Error ? error.message : "An unknown error occurred.",
             });
-        }
-    } else {
+        }        
+    } 
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.status(200).end();
+        return;
+      }
+      
+    else {
         console.log("Invalid method received:", req.method);
         res.setHeader("Allow", ["GET"]);
         res.status(405).json({ message: "Method Not Allowed" });
