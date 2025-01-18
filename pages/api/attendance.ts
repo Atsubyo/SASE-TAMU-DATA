@@ -13,7 +13,7 @@ import Cors from 'cors';
 
 
 const cors = Cors({
-    origin: '*', // Allow all origins
+    origin: "https://sasetamu.org", // Allow all origins
     methods: ['GET', 'POST', 'OPTIONS'], // Allowed methods
   });
   
