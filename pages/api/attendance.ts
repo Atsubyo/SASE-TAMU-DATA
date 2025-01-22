@@ -13,7 +13,7 @@ import Cors from 'cors';
 
 
 const cors = Cors({
-    origin: 'https://www.sasetamu.org', // Allow all origins
+    origin: 'https://sasetamu.org', // Allow all origins
     methods: ['GET', 'POST', 'OPTIONS'], // Allowed methods
   });
   
@@ -116,8 +116,8 @@ export default async function handler(
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
         res.status(200).end();
         return;
-      }
-      
+    }
+
     else {
         console.log("Invalid method received:", req.method);
         res.setHeader("Allow", ["GET"]);
